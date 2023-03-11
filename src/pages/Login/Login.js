@@ -4,13 +4,13 @@ import { setItem } from "../../helpers/miscelleneous";
 import { useHistory } from "react-router";
 import { useDispatch } from 'react-redux'
 import * as types from "../../store/actionTypes/auth";
-import { login } from "../../store/reducers/user";
+import { login } from "../../store/reducers/authData";
 import { useSelector } from "react-redux";
 import * as firebase_config from "./../../helpers/firebase-config";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import instance from "../../services/httpinstance/axios";
 const Login = () => {
-    const { user } = useSelector((state) => state.user);
+    const { authData } = useSelector((state) => state.authData);
     const history = useHistory();
     const dispatch = useDispatch();
     const [error, setError] = useState();
@@ -33,12 +33,12 @@ const Login = () => {
             const token = credential.accessToken;
             dispatch(login({ data: result.user.accessToken }))
             setTimeout(async () => {
-                console.log(user)
-                if (user.user.length != 0) {
-                    await setItem("auth", user.user);
-                    await setItem("time", user.user)
-                    console.log(user.user.length)
-                    history.replace("/signUp");
+                console.log(authData)
+                if (authData) {
+                    await setItem("auth", authData);
+                    await setItem("time", authData)
+                    console.log(authData)
+                    history.replace("/dashboard");
                 }
             }, 5000)
         } catch (e) {
@@ -46,25 +46,24 @@ const Login = () => {
         }
     }
     useEffect(() => {
-        console.log(user)
-        if (user?.token) {
-            setItem("auth", user);
+        console.log(authData)
+        if (authData?.token) {
+            setItem("auth", authData);
             setItem("time", new Date().getDate() + new Date().getTime());
-            if (user?.user?.signInMethod == 'email' && user?.user?.verification) {
-                history.push('/auth/verification')
+            if (authData?.authData?.signInMethod == 'email' && authData?.authData?.verification) {
             } else {
-                history.push('/dashboard')
+                history.push('/signup')
             }
         }
-    }, [user])
+    }, [authData])
     const submitData = async (e) => {
         e.preventDefault();
         try {
             await dispatch(login(data))
             setTimeout(async () => {
-                if (user.user) {
-                    await setItem("auth", user);
-                    await setItem("time", user.user)
+                if (authData.authData) {
+                    await setItem("auth", authData);
+                    await setItem("time", authData.authData)
                     history.replace("/signup");
                 }
             }, 5000)

@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { authCallBegan } from "./../actionTypes/auth";
+import { authCallBegan } from "../actionTypes/auth";
 
 const slice = createSlice({
-    name: 'user',
+    name: 'authData',
     initialState: {
-        user: []
+        authData: []
     },
     reducers: {
-        authCallSuccess: (user, action) => {
-            user.user = action.payload;
+        authCallSuccess: (authData, action) => {
+            authData.authData = action.payload;
         }
     }
 })
